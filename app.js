@@ -68,7 +68,7 @@ app.use(function(err, req, res, next) {
 });
 
 // Database Connection
-mongoose.connect("mongodb+srv://dinesh_dadwal:DDLB9216@cluster0.d6eft.mongodb.net/myFirstDatabase?retryWrites=true&w=majority", { useNewUrlParser: true, useUnifiedTopology: true }, (err) => {
+mongoose.connect("mongodb+srv://<username>:<[assword>@cluster0.d6eft.mongodb.net/myFirstDatabase?retryWrites=true&w=majority", { useNewUrlParser: true, useUnifiedTopology: true }, (err) => {
   if (err)
     console.error(err)
   else
