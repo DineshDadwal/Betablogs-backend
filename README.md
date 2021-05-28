@@ -2,7 +2,8 @@
 
 #Download Node first to use Npm 
 ------------------------------------------------------------------------------------------------------
-after the download check node version 
+# After the download check node version 
+
 $ node --v
 ------------------------------------------------------------------------------------------------------
 # Install the code from the repsotory!!
