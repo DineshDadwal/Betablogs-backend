@@ -2,7 +2,8 @@ var express = require('express');
 const mongoose = require('mongoose');
 var router = express.Router();
 var multer = require('multer');
-
+var fs = require('fs');
+const dir = './uploads/';
 const storage = multer.diskStorage({
     destination: function(req, file, cb){
         cb(null, './uploads/')
@@ -16,16 +17,28 @@ var dashboard = require('../models/dashboard');
 let { encryptPassword, comparePassword, generateJwt, mailFunc } = require('../utils/utils');
 
 router.post('/file',upload.single('Upload'), async (req, res, next) => {
-  const Upload = req.file
- console.log(file.filename);
- if(!Upload){
-     const error = new Error('No file')
-     error.httpStatusCode = 400
-     return next(error)
- }else{
-     res.httpStatusCode = 200
- }
- res.send(Upload)
+  try{
+    const Upload = req.file
+    console.log(Upload);
+    if(!Upload){
+        const error = new Error('No file')
+        error.httpStatusCode = 400
+        return next(error)
+    }else{
+        // res.httpStatusCode = 200
+    res.json({ message: "Upload success", data: Upload, success: true });
+
+    }
+    // res.send(Upload)
+  }catch(err){
+    console.error(err);
+    if (err.message)
+      res.json({ message: err.message, data: err, success: false });
+
+    else
+      res.json({ message: 'error', data: err, success: false })
+  }
+ 
 })
 
 router.post('/dashboard', async (req, res) => {
@@ -50,12 +63,13 @@ try{
         Content: req.body.Content,
         Upload: req.body.Upload,
         author:req.body.author,
-        createdAt: req.body.createdAt
+        createdAt: req.body.createdAt,
+        userId:req.body.userId
     }
     ).save();
     if (newBlog){
     console.log(newBlog)
-    res.json({ message: "Registered Successfully", success: true })
+    res.json({ message: "Registered Successfully", success: true, data : newBlog })
     }else
     throw new Error('an err occured during registering')
 }
@@ -75,7 +89,7 @@ catch (err) {
 //////////////get all Blogs
 router.get('/getAllBlogs', async (req, res) => {
   try {
-      const allBlogs = await dashboard.find().sort({$natural : -1}).exec();
+      const allBlogs = await dashboard.find().sort({$natural : -1}).populate('userId').exec();
       res.json({ message: "all Blogs sucess", data: allBlogs, success: true })
   }
   catch (err) {
@@ -102,7 +116,7 @@ router.get('/getCount', async (req, res) => {
 
   router.get('/getSpecificBlog/:id', async (req, res) => {
     try {
-      const specificBlog = await dashboard.findById(req.params.id,req.body).exec()
+      const specificBlog = await dashboard.findById(req.params.id,req.body).populate('userId').exec()
       if(specificBlog){
         res.json({message:"user data", data:specificBlog, success:true})
       }
@@ -123,7 +137,7 @@ router.get('/getCount', async (req, res) => {
 
 router.get('/getCoronavirusBlogs', async (req, res) => {
   try {
-      const specificTopic = await dashboard.find( {categoryId : '60394e7413591832fc1237c9'}).exec()
+      const specificTopic = await dashboard.find( {categoryId : '60394e7413591832fc1237c9'}).populate('userId').exec()
       
       console.log(specificTopic)
          res.json({ message: "success", data: specificTopic, success: true }) 
@@ -140,7 +154,7 @@ router.get('/getCoronavirusBlogs', async (req, res) => {
 
 router.get('/getNewsBlogs', async (req, res) => {
   try {
-      const specificTopic = await dashboard.find( {categoryId : '60394e8613591832fc1237ca'}).exec()
+      const specificTopic = await dashboard.find( {categoryId : '60394e8613591832fc1237ca'}).populate('userId').exec()
       
       console.log(specificTopic)
          res.json({ message: "success", data: specificTopic, success: true }) 
@@ -159,7 +173,7 @@ router.get('/getNewsBlogs', async (req, res) => {
 
 router.get('/getEntertainmentBlogs', async (req, res) => {
   try {
-      const specificTopic = await dashboard.find( {categoryId : '60394e9313591832fc1237cb'}).exec()
+      const specificTopic = await dashboard.find( {categoryId : '60394e9313591832fc1237cb'}).populate('userId').exec()
       
       console.log(specificTopic)
          res.json({ message: "success", data: specificTopic, success: true }) 
@@ -175,7 +189,7 @@ router.get('/getEntertainmentBlogs', async (req, res) => {
 // Politics Component Injection
 router.get('/getPoliticsBlogs', async (req, res) => {
   try {
-      const specificTopic = await dashboard.find( {categoryId : '60394e9b13591832fc1237cc'}).exec()
+      const specificTopic = await dashboard.find( {categoryId : '60394e9b13591832fc1237cc'}).populate('userId').exec()
       
       console.log(specificTopic)
          res.json({ message: "success", data: specificTopic, success: true }) 
@@ -192,7 +206,7 @@ router.get('/getPoliticsBlogs', async (req, res) => {
 
 router.get('/getSportsBlogs', async (req, res) => {
   try {
-      const specificTopic = await dashboard.find( {categoryId : '60394ea313591832fc1237cd'}).exec()
+      const specificTopic = await dashboard.find( {categoryId : '60394ea313591832fc1237cd'}).populate('userId').exec()
       
       console.log(specificTopic)
          res.json({ message: "success", data: specificTopic, success: true }) 
@@ -208,10 +222,23 @@ router.get('/getSportsBlogs', async (req, res) => {
 // Technology Component Injection
 router.get('/getTechnologyBlogs', async (req, res) => {
   try {
-      const specificTopic = await dashboard.find( {categoryId : '60394ead13591832fc1237ce'}).exec()
+      const specificTopic = await dashboard.find( {categoryId : '60394ead13591832fc1237ce'}).populate('userId').exec()
       
       console.log(specificTopic)
          res.json({ message: "success", data: specificTopic, success: true }) 
+  }
+  catch (err) {
+      if (err.message)
+          res.json({ message: err.message, success: false })
+      else
+          res.json({ message: 'Error', success: false })
+  }
+})
+
+router.get('/imageCount', async (req, res) => {
+  try {
+    const length = fs.readdirSync(dir).length
+    res.json({ message: "success", data: length, success: true }) 
   }
   catch (err) {
       if (err.message)
@@ -239,5 +266,5 @@ router.get('/getBlogStats', async (req, res) => {
             res.json({ message: 'Error', success: false })
     }
   })
-
+ 
 module.exports = router;

@@ -8,7 +8,7 @@ router.get('/userDataTable', function (req, res, next) {
  
  router.get('/getUser', async (req, res) => {
    try {
-     const user = await Register.find().exec()
+     const user = await Register.find().populate('blogs').exec()
      if(user){
        res.json({message:"user data", data:user, success:true})
      }

@@ -3,7 +3,7 @@ var router = express.Router();
 var Register = require("../models/register");
 var Reset = require("../models/reset");
 let { encryptPassword } = require('../utils/utils');
-let { mailFunc } = require('../utils/mail');
+let { mailFuncReset } = require('../utils/utils');
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
@@ -13,11 +13,12 @@ router.post('/resetPassword', async (req, res) => {
    try{
        
       const email = await Register.findOne({ email: req.body.email })
-      await mailFunc(req.body.email);
        if (email){
-       console.log(email)
-      const credentials =  await Reset(req.body).save()
-       res.json({ message: "Registered Successfully", success: true })
+      await mailFuncReset(req.body.email);
+
+      //  console.log(email)
+      // const credentials =  await Reset(req.body).save()
+       res.json({ message: "User Exist", success: true })
       
        }else
        throw new Error('an err occured during registering')

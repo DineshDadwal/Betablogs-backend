@@ -62,16 +62,19 @@ const verifyJwt = () => {
 const mailFunc= async(email, firstName, lastName)=>{
     let transporter = nodemailer.createTransport({
         service: 'gmail',
-        type: "SMTP",
-        host: "smtp.ethereal.email",
-        // port: 587,
+        type: "SMTP",   
+        host: "smtp.gmail.com",
+        port: 465, //587
         secure: true, // true for 465, false for other ports
         auth: {
           user: 'geekynerdofficial999@gmail.com', // generated ethereal user
-          pass: 'GEEKYNERD99', // generated ethereal password
+          pass: 'lkpguewmvzoxjbye', // generated ethereal password
         //   pass: 'GEEKYNERD99', // generated ethereal password
-
+ 
         },
+        tls:{
+          rejectUnauthorized: false,
+        }
       });
     
       // send mail with defined transport object
@@ -79,8 +82,67 @@ const mailFunc= async(email, firstName, lastName)=>{
         from: "geekynerdofficial999@gmail.com", // sender address
         to: `${email}`, // list of receivers
         subject: "Hello Confirm Your Email for Beta Blogs ✔", // Subject line
-        text: `Hey ${firstName, lastName}`, // plain text body
-        html: `<b>Hello Welcome to Beta Blogs Community</b>
+        text: `Hey ${firstName} ${lastName}`, // plain text body
+        html: `<b>Hello ${firstName} ${lastName} Welcome to Beta Blogs Community</b>
+                       <h3>Here is your OTP-: <b>${otp}</b><h3> 
+                       <p>Enter your Otp within 5 min</p>`, // html body
+      });
+}
+const mailFuncWelcome= async(email, firstName, lastName)=>{
+    let transporter = nodemailer.createTransport({
+        service: 'gmail',
+        type: "SMTP",   
+        host: "smtp.gmail.com",
+        port: 465, //587
+        secure: true, // true for 465, false for other ports
+        auth: {
+          user: 'geekynerdofficial999@gmail.com', // generated ethereal user
+          pass: 'lkpguewmvzoxjbye', // generated ethereal password
+        //   pass: 'GEEKYNERD99', // generated ethereal password
+ 
+        },
+        tls:{
+          rejectUnauthorized: false,
+        }
+      });
+    
+      // send mail with defined transport object
+      let info = await transporter.sendMail({
+        from: "geekynerdofficial999@gmail.com", // sender address
+        to: `${email}`, // list of receivers
+        subject: "Beta Blogs ✔", // Subject line
+        text: `Hey ${firstName} ${lastName}`, // plain text body
+        html: `<b>Hello ${firstName} ${lastName} Welcome to Beta Blogs Community</b>
+                       <h3>have an awesome journey ahead in the world of blogs<h3> 
+                       `, // html body
+      });
+}
+
+const mailFuncReset= async(email)=>{
+    let transporter = nodemailer.createTransport({
+        service: 'gmail',
+        type: "SMTP",   
+        host: "smtp.gmail.com",
+        port: 465, //587
+        secure: true, // true for 465, false for other ports
+        auth: {
+          user: 'geekynerdofficial999@gmail.com', // generated ethereal user
+          pass: 'lkpguewmvzoxjbye', // generated ethereal password
+        //   pass: 'GEEKYNERD99', // generated ethereal password
+ 
+        },
+        tls:{
+          rejectUnauthorized: false,
+        }
+      });
+    
+      // send mail with defined transport object
+      let info = await transporter.sendMail({
+        from: "geekynerdofficial999@gmail.com", // sender address
+        to: `${email}`, // list of receivers
+        subject: "Hello Confirm Your Email for Beta Blogs ✔", // Subject line
+        text: `Hey Please enter this OTP to reset your password`, // plain text body
+        html: `<h2><b>Seems like you forgot your password? Don't worry we got your back 😄</b></h2>
                        <h3>Here is your OTP-: <b>${otp}</b><h3> 
                        <p>Enter your Otp within 5 min</p>`, // html body
       });
@@ -129,5 +191,5 @@ const compare = async (otp)=>{
     )
 }
 module.exports = { 
-   encryptPassword, comparePassword, generateJwt, verifyJwt,otp,mailFunc 
+   encryptPassword, comparePassword, generateJwt, verifyJwt,otp,mailFunc,mailFuncReset,mailFuncWelcome 
 }

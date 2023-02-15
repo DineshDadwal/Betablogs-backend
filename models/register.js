@@ -7,9 +7,10 @@ var register = mongoose.Schema({
    password:String,
    confirm:String,
    DOB:Date,
-   phone:Number,
+   // phone:Number,
    gender:String,
    profile:String,
+   blogs:[{type:'ObjectId',ref:'Dashboard'}]
 })
 
 module.exports = mongoose.model('Register',register);
